@@ -1,0 +1,22 @@
+[gd_scene load_steps=2 format=3 uid="uid://c7v7l4n5h2m8"]
+
+[sub_resource type="GDScript" id="GDScript_1"]
+script/source = "extends Node
+func _ready():
+	var mesh = load(\"res://assets/meshes/shining_quetzal.glb\")
+	if mesh:
+		var inst = mesh.instantiate()
+		get_parent().add_child.call_deferred(inst)
+"
+
+[node name="ShiningQuetzal" type="StaticBody3D"]
+collision_layer = 2
+collision_mask = 0
+
+[node name="Model" type="Node3D" parent="."]
+
+[node name="QuetzalMesh" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
+
+[node name="glb_load" type="Node" parent="Model/QuetzalMesh"]
+script = SubResource("GDScript_1")

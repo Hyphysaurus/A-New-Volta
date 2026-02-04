@@ -1,0 +1,14 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://assets/shaders/stylized_sky.gdshader" id="1_sky"]
+
+[resource]
+shader = ExtResource("1_sky")
+shader_parameter/sky_top_color = Color(0.35, 0.64, 0.89, 1)
+shader_parameter/sky_horizon_color = Color(0.68, 0.84, 0.95, 1)
+shader_parameter/horizon_blur = 0.05
+shader_parameter/cloud_direction = Vector2(0.5, 0)
+shader_parameter/cloud_speed = 0.01
+shader_parameter/cloud_cover = 0.5
+shader_parameter/cloud_smoothness = 0.1
+shader_parameter/cloud_color = Color(1, 1, 1, 1)

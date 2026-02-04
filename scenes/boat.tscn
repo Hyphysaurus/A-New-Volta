@@ -1,0 +1,71 @@
+[gd_scene load_steps=6 format=3 uid="uid://bp15pyfwjp437"]
+
+[ext_resource type="Script" uid="uid://cijb8dhy7c7lt" path="res://scripts/actors/boat.gd" id="1_boat"]
+[ext_resource type="Script" uid="uid://yw82uo5crh8q" path="res://scripts/systems/camera_follow.gd" id="2_cam"]
+[ext_resource type="Script" uid="uid://bv8v7j4v3v3v3" path="res://scripts/actors/mariner_controller.gd" id="3_mariner"]
+
+[sub_resource type="GDScript" id="GDScript_1"]
+script/source = "extends Node3D
+func _ready():
+	var mesh = load(\"res://assets/meshes/shining_quetzal.glb\")
+	if mesh:
+		var inst = mesh.instantiate()
+		inst.scale = Vector3(6.0, 6.0, 6.0)
+		inst.position = Vector3(0, 0.4, 0)
+		# Add directly to parent (the Model node)
+		get_parent().add_child(inst)
+		print(\"✓ Quetzal mesh loaded\")
+	else:
+		push_error(\"Failed to load Quetzal mesh\")
+"
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hull"]
+size = Vector3(12.0, 7.5, 30.0)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_bow"]
+radius = 6.0
+
+[node name="Boat" type="RigidBody3D" groups=["boat"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 250, 2, 0)
+collision_layer = 1
+collision_mask = 3
+mass = 80.0
+gravity_scale = 1.0
+can_sleep = false
+contact_monitor = true
+max_contacts_reported = 4
+script = ExtResource("1_boat")
+
+[node name="Model" type="Node3D" parent="."]
+
+[node name="QuetzalLoader" type="Node3D" parent="Model"]
+script = SubResource("GDScript_1")
+
+[node name="HullCollision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0, 0)
+shape = SubResource("BoxShape3D_hull")
+
+[node name="BowCollision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0, -18)
+shape = SubResource("SphereShape3D_bow")
+
+[node name="CameraPivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.978148, 0.207912, 0, -0.207912, 0.978148, 0, 8, 25)
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot"]
+transform = Transform3D(1, 0, 0, 0, 0.939693, 0.34202, 0, -0.34202, 0.939693, 0, 10, 35)
+current = true
+fov = 60.0
+far = 5000.0
+script = ExtResource("2_cam")
+
+[node name="MarinerAttachPoint" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -2.8)
+
+[node name="Mariner" type="CharacterBody3D" parent="." groups=["mariner"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -2.8)
+visible = false
+script = ExtResource("3_mariner")
+
+[node name="CameraPivot" type="Node3D" parent="Mariner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)

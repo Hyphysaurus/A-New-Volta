@@ -1,0 +1,122 @@
+[gd_scene format=3 uid="uid://cbuph0kkbn2n5"]
+
+[ext_resource type="Script" uid="uid://btaetvjewbwau" path="res://scripts/systems/world_debug.gd" id="1"]
+[ext_resource type="Script" uid="uid://ckf4rgnuodgwk" path="res://scripts/systems/time_system.gd" id="2"]
+[ext_resource type="Script" uid="uid://cylukoi06m7nh" path="res://scripts/systems/cataclysm_system.gd" id="3"]
+[ext_resource type="Script" uid="uid://bqlmb7k0tgtla" path="res://scripts/systems/world_system.gd" id="4"]
+[ext_resource type="Script" uid="uid://bt2cl5pxvxv71" path="res://scripts/systems/save_system.gd" id="5"]
+[ext_resource type="Script" uid="uid://bfvevmvw7m8bf" path="res://scripts/systems/journal_system.gd" id="6"]
+[ext_resource type="Script" uid="uid://qhyorvt3nel3" path="res://scripts/systems/shrine_system.gd" id="7"]
+[ext_resource type="Script" uid="uid://bs0dwoye3mi7f" path="res://scripts/systems/ocean_grid.gd" id="8"]
+[ext_resource type="PackedScene" uid="uid://bp15pyfwjp437" path="res://scenes/boat.tscn" id="9"]
+[ext_resource type="Script" uid="uid://dqgdskddjtl5w" path="res://scenes/diagnostic.gd" id="10"]
+[ext_resource type="Script" uid="uid://3pvy1vweglix" path="res://scripts/systems/island_system.gd" id="11"]
+[ext_resource type="Script" uid="uid://dy11kcc4eyuda" path="res://scripts/systems/wind_system.gd" id="12"]
+[ext_resource type="Script" uid="uid://paafcxrt1clr" path="res://scripts/systems/env_setup.gd" id="13"]
+[ext_resource type="Script" uid="uid://c85eapuisgvmu" path="res://scripts/systems/docking_system.gd" id="14"]
+[ext_resource type="Script" uid="uid://c52bub4etui54" path="res://scripts/ui/sailing_hud.gd" id="15"]
+[ext_resource type="Script" uid="uid://1n63in5r43fx6" path="res://scripts/ui/game_menu.gd" id="16"]
+[ext_resource type="Script" path="res://scripts/systems/region_system.gd" id="17"]
+[ext_resource type="Material" path="res://assets/materials/water_material.tres" id="18"]
+[ext_resource type="Environment" path="res://assets/environments/main_environment.tres" id="19"]
+[ext_resource type="Material" path="res://assets/materials/post_outline_material.tres" id="20"]
+[ext_resource type="Script" uid="uid://d1v1v1v1v1v1v" path="res://scripts/state_manager.gd" id="21"]
+
+[sub_resource type="PlaneMesh" id="1"]
+size = Vector2(4000, 4000)
+subdivide_width = 128
+subdivide_depth = 128
+
+[sub_resource type="QuadMesh" id="2"]
+size = Vector2(2, 2)
+
+[node name="World" type="Node3D"]
+script = ExtResource("1")
+
+[node name="WorldSystem" type="Node3D" parent="."]
+script = ExtResource("4")
+
+[node name="TimeSystem" type="Node3D" parent="."]
+script = ExtResource("2")
+
+[node name="CataclysmSystem" type="Node3D" parent="."]
+script = ExtResource("3")
+
+[node name="WindSystem" type="Node3D" parent="."]
+script = ExtResource("12")
+
+[node name="SaveSystem" type="Node3D" parent="."]
+script = ExtResource("5")
+
+[node name="JournalSystem" type="Node3D" parent="."]
+script = ExtResource("6")
+
+[node name="ShrineSystem" type="Node3D" parent="."]
+script = ExtResource("7")
+
+[node name="Ocean" type="MeshInstance3D" parent="."]
+mesh = SubResource("1")
+material_override = ExtResource("18")
+script = ExtResource("8")
+
+[node name="Boat" parent="." instance=ExtResource("9")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 250, 2, 0)
+mass = 80.0
+gravity_scale = 1.0
+can_sleep = false
+
+[node name="DockingSystem" type="Node3D" parent="."]
+script = ExtResource("14")
+
+[node name="PostProcessLayer" type="CanvasLayer" parent="."]
+
+[node name="OutlineEffect" type="MeshInstance3D" parent="."]
+visible = false
+mesh = SubResource("2")
+material_override = ExtResource("20")
+
+[node name="UICanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="SailingHUD" type="Control" parent="UICanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("15")
+metadata/_edit_use_anchors_ = true
+
+[node name="GameMenu" type="Control" parent="UICanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+process_mode = 3
+script = ExtResource("16")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 0, 0, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("19")
+
+[node name="DiagnosticNode" type="Node" parent="."]
+script = ExtResource("10")
+
+[node name="EnvSetup" type="Node3D" parent="."]
+script = ExtResource("13")
+
+[node name="IslandSystem" type="Node3D" parent="."]
+script = ExtResource("11")
+
+[node name="RegionSystem" type="Node3D" parent="."]
+script = ExtResource("17")
+
+[node name="StateManager" type="Node" parent="." groups=["state_manager"]]
+script = ExtResource("21")
+boat = NodePath("Boat")
+mariner = NodePath("Boat/Mariner")
+camera_controller = NodePath("Boat/CameraPivot/Camera3D")
